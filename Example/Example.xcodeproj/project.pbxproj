@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0FF3EDE31F910FBB00B621CE /* ImageRow.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F9CAB221D89C756006E1824 /* ImageRow.framework */; };
+		0FF3EDE41F910FBB00B621CE /* ImageRow.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8F9CAB221D89C756006E1824 /* ImageRow.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		28BDF6141DA43255000518EB /* Eureka.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28BDF6101DA4323E000518EB /* Eureka.framework */; };
 		28BDF6151DA43255000518EB /* Eureka.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 28BDF6101DA4323E000518EB /* Eureka.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		28F828D01C4B714D00330CF4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28F828CF1C4B714D00330CF4 /* AppDelegate.swift */; };
@@ -19,6 +21,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0FF3EDE51F910FBB00B621CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 287D0A741C4B7B26004566D6 /* ImageRow.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 28F8287C1C494B2C00330CF4;
+			remoteInfo = ImageRow;
+		};
 		8F9CAB211D89C756006E1824 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 287D0A741C4B7B26004566D6 /* ImageRow.xcodeproj */;
@@ -43,6 +52,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				28BDF6151DA43255000518EB /* Eureka.framework in Embed Frameworks */,
+				0FF3EDE41F910FBB00B621CE /* ImageRow.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -69,6 +79,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				28BDF6141DA43255000518EB /* Eureka.framework in Frameworks */,
+				0FF3EDE31F910FBB00B621CE /* ImageRow.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,6 +152,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				0FF3EDE61F910FBB00B621CE /* PBXTargetDependency */,
 			);
 			name = Example;
 			productName = Example;
@@ -246,6 +258,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0FF3EDE61F910FBB00B621CE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ImageRow;
+			targetProxy = 0FF3EDE51F910FBB00B621CE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		28F828D31C4B714D00330CF4 /* Main.storyboard */ = {
