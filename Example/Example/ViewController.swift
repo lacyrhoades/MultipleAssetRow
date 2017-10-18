@@ -8,9 +8,34 @@
 import ImageRow
 import Eureka
 
+class DemoAssetDelegate: MultipleAssetPickerDelegate {
+    var sourceType: MultipleAssetRowSourceTypes
+    
+    init(sourceType: MultipleAssetRowSourceTypes) {
+        self.sourceType = sourceType
+    }
+    
+    var assetChangeAction: (() -> ())? = nil
+    
+    var numberOfAssets: Int {
+        switch self.sourceType {
+        case .Dropbox:
+            return 11
+        case .PhotoLibrary:
+            return 4
+        default:
+            return 0
+        }
+    }
+}
+
 class ViewController: FormViewController {
+    var testDelegate: DemoAssetDelegate!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.testDelegate = DemoAssetDelegate(sourceType: .Dropbox)
 
         form +++ Section()
                 <<< ImageRow() { row in
@@ -18,6 +43,12 @@ class ViewController: FormViewController {
                     row.sourceTypes = [.PhotoLibrary, .SavedPhotosAlbum]
                     row.clearAction = .yes(style: UIAlertActionStyle.destructive)
                 }
+            <<< MultipleAssetRow() { [weak self] row in
+                row.title = "Multi Image Row"
+                row.availableSourceTypes = [.PhotoLibrary, .Dropbox]
+                row.assetDelegate = self?.testDelegate
+                row.clearAction = .yes(style: UIAlertActionStyle.destructive)
+            }
              +++
                  Section()
                 <<< ImageRow() {

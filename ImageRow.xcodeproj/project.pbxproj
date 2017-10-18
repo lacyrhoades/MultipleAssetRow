@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F3C79351F9699ED00D68AAD /* MultipleAssetPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F3C79341F9699ED00D68AAD /* MultipleAssetPickerController.swift */; };
+		0FDF87181F969FE6000D5D42 /* MultipleAssetPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FDF87171F969FE6000D5D42 /* MultipleAssetPickerCell.swift */; };
+		0FDF871C1F96AC6A000D5D42 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0FDF871B1F96AC6A000D5D42 /* Media.xcassets */; };
+		0FF3EDEC1F9113C600B621CE /* MultipleAssetRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF3EDEA1F91116700B621CE /* MultipleAssetRow.swift */; };
+		0FF3EDED1F9113C900B621CE /* MultipleAssetRow.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF3EDE91F91116700B621CE /* MultipleAssetRow.h */; };
+		0FF3EDEE1F9113CC00B621CE /* MultipleAssetPickerRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF3EDE81F91116700B621CE /* MultipleAssetPickerRowController.swift */; };
+		0FF3EDEF1F9113CE00B621CE /* MultipleAssetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF3EDEB1F91116700B621CE /* MultipleAssetCell.swift */; };
+		0FF3EDF11F9116EC00B621CE /* Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF3EDF01F9116EC00B621CE /* Assets.swift */; };
+		0FF3EDF31F91171900B621CE /* MultipleAssetRowSourceTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF3EDF21F91171900B621CE /* MultipleAssetRowSourceTypes.swift */; };
 		28BDF5F51DA40763000518EB /* ImagePickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28BDF5F41DA40763000518EB /* ImagePickerController.swift */; };
 		28BDF5F91DA4078C000518EB /* ImageRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28BDF5F81DA4078C000518EB /* ImageRow.swift */; };
 		28BDF5FB1DA4079B000518EB /* ImageRowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28BDF5FA1DA4079B000518EB /* ImageRowTests.swift */; };
@@ -28,6 +37,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0F3C79341F9699ED00D68AAD /* MultipleAssetPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleAssetPickerController.swift; sourceTree = "<group>"; };
+		0FDF87171F969FE6000D5D42 /* MultipleAssetPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleAssetPickerCell.swift; sourceTree = "<group>"; };
+		0FDF871B1F96AC6A000D5D42 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		0FF3EDE81F91116700B621CE /* MultipleAssetPickerRowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleAssetPickerRowController.swift; sourceTree = "<group>"; };
+		0FF3EDE91F91116700B621CE /* MultipleAssetRow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultipleAssetRow.h; sourceTree = "<group>"; };
+		0FF3EDEA1F91116700B621CE /* MultipleAssetRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleAssetRow.swift; sourceTree = "<group>"; };
+		0FF3EDEB1F91116700B621CE /* MultipleAssetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleAssetCell.swift; sourceTree = "<group>"; };
+		0FF3EDF01F9116EC00B621CE /* Assets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assets.swift; sourceTree = "<group>"; };
+		0FF3EDF21F91171900B621CE /* MultipleAssetRowSourceTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleAssetRowSourceTypes.swift; sourceTree = "<group>"; };
 		28BDF5F41DA40763000518EB /* ImagePickerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerController.swift; sourceTree = "<group>"; };
 		28BDF5F61DA4076A000518EB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		28BDF5F81DA4078C000518EB /* ImageRow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageRow.swift; sourceTree = "<group>"; };
@@ -37,7 +55,6 @@
 		28F828801C494B2C00330CF4 /* ImageRow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageRow.h; sourceTree = "<group>"; };
 		28F828871C494B2C00330CF4 /* ImageRowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ImageRowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		28F8288E1C494B2C00330CF4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		28F8289B1C494BF100330CF4 /* Playground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; name = Playground.playground; path = Example/Playground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9A61F6D61EBA133800CBE062 /* ImageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -62,6 +79,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0FDF871A1F96AC4B000D5D42 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				28BDF5F61DA4076A000518EB /* Info.plist */,
+				0FDF871B1F96AC6A000D5D42 /* Media.xcassets */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		0FF3EDE71F91110900B621CE /* MultipleAssetRow */ = {
+			isa = PBXGroup;
+			children = (
+				0FF3EDE91F91116700B621CE /* MultipleAssetRow.h */,
+				0FF3EDEA1F91116700B621CE /* MultipleAssetRow.swift */,
+				0FF3EDEB1F91116700B621CE /* MultipleAssetCell.swift */,
+				0FF3EDE81F91116700B621CE /* MultipleAssetPickerRowController.swift */,
+				0FF3EDF01F9116EC00B621CE /* Assets.swift */,
+				0FF3EDF21F91171900B621CE /* MultipleAssetRowSourceTypes.swift */,
+				0F3C79341F9699ED00D68AAD /* MultipleAssetPickerController.swift */,
+				0FDF87171F969FE6000D5D42 /* MultipleAssetPickerCell.swift */,
+			);
+			path = MultipleAssetRow;
+			sourceTree = "<group>";
+		};
 		28BDF5FC1DA422B5000518EB /* Dependencies */ = {
 			isa = PBXGroup;
 			children = (
@@ -73,8 +114,9 @@
 		28F828731C494B2C00330CF4 = {
 			isa = PBXGroup;
 			children = (
-				28F8289B1C494BF100330CF4 /* Playground.playground */,
-				28F828971C494B4200330CF4 /* Sources */,
+				0FDF871A1F96AC4B000D5D42 /* Shared */,
+				0FF3EDE71F91110900B621CE /* MultipleAssetRow */,
+				28F828971C494B4200330CF4 /* ImageRow */,
 				28F8288B1C494B2C00330CF4 /* Tests */,
 				28F8287E1C494B2C00330CF4 /* Products */,
 				28BDF5FC1DA422B5000518EB /* Dependencies */,
@@ -99,16 +141,15 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
-		28F828971C494B4200330CF4 /* Sources */ = {
+		28F828971C494B4200330CF4 /* ImageRow */ = {
 			isa = PBXGroup;
 			children = (
 				28BDF5F41DA40763000518EB /* ImagePickerController.swift */,
 				28BDF5F81DA4078C000518EB /* ImageRow.swift */,
 				9A61F6D61EBA133800CBE062 /* ImageCell.swift */,
-				28BDF5F61DA4076A000518EB /* Info.plist */,
 				28F828801C494B2C00330CF4 /* ImageRow.h */,
 			);
-			path = Sources;
+			path = ImageRow;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -118,6 +159,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0FF3EDED1F9113C900B621CE /* MultipleAssetRow.h in Headers */,
 				28F828811C494B2C00330CF4 /* ImageRow.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -203,6 +245,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0FDF871C1F96AC6A000D5D42 /* Media.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,7 +264,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				28BDF5F91DA4078C000518EB /* ImageRow.swift in Sources */,
+				0F3C79351F9699ED00D68AAD /* MultipleAssetPickerController.swift in Sources */,
+				0FDF87181F969FE6000D5D42 /* MultipleAssetPickerCell.swift in Sources */,
+				0FF3EDF11F9116EC00B621CE /* Assets.swift in Sources */,
+				0FF3EDF31F91171900B621CE /* MultipleAssetRowSourceTypes.swift in Sources */,
+				0FF3EDEC1F9113C600B621CE /* MultipleAssetRow.swift in Sources */,
+				0FF3EDEE1F9113CC00B621CE /* MultipleAssetPickerRowController.swift in Sources */,
 				28BDF5F51DA40763000518EB /* ImagePickerController.swift in Sources */,
+				0FF3EDEF1F9113CE00B621CE /* MultipleAssetCell.swift in Sources */,
 				9A61F6D71EBA133800CBE062 /* ImageCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -364,7 +414,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/Sources/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Shared/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.xmartlabs.ImageRow;
@@ -389,7 +439,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/Sources/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Shared/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.xmartlabs.ImageRow;
