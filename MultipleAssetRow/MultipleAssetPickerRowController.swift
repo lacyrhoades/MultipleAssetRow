@@ -18,46 +18,39 @@ open class MultipleAssetPickerRowController: UIViewController, TypedRowControlle
     open override func viewDidLoad() {
         super.viewDidLoad()
         
-        pickerController.sourceType = self.assetSourceType
-        self.pickerController.assetDelegate = self.assetDelegate
-        self.pickerController.view.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(self.pickerController.view)
-        self.addChildViewController(self.pickerController)
-        self.pickerController.didMove(toParentViewController: self)
+        self.view.backgroundColor = UIColor.lightGray
         
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(didTapDone))
+        self.navigationItem.rightBarButtonItem?.isEnabled = false
+        
+        pickerController.title = self.row.title
+        pickerController.sourceType = self.assetSourceType
+        pickerController.assetDelegate = self.assetDelegate
+        
+        pickerController.view.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(self.pickerController.view)
+        
+        self.addChildViewController(self.pickerController)
+        pickerController.didMove(toParentViewController: self)
+
         self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[pickerView]|", options: [], metrics: [:], views: ["pickerView": self.pickerController.view]))
         self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[pickerView]|", options: [], metrics: [:], views: ["pickerView": self.pickerController.view]))
     }
-}
-
-/*
- UIImagePickerController, TypedRowControllerType, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    /// The row that pushed or presented this controller
-    public var row: RowOf<Assets>!
-    
-    public var assetSourceType: MultipleAssetRowSourceTypes = MultipleAssetRowSourceTypes(.photoLibrary) {
-        didSet {
-            
+    @objc func didTapDone() {
+        self.pickerController.getSelectedAssetIDs(withProgress: { (progress) in
+            print(progress)
+        }) { (assetIDs) in
+            if assetIDs.isEmpty {
+                self.row.value = nil
+            } else {
+                self.row.value = Assets(value: assetIDs)
+            }
+            self.onDismissCallback?(self)
         }
     }
     
-    /// A closure to be called when the controller disappears.
-    public var onDismissCallback: ((UIViewController) -> ())?
-    
-    open override func viewDidLoad() {
-        super.viewDidLoad()
-        delegate = self
-    }
-    
-    open func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-//        (row as? ImageRow)?.imageURL = info[UIImagePickerControllerReferenceURL] as? URL
-//        row.value = info[UIImagePickerControllerOriginalImage] as? UIImage
-        onDismissCallback?(self)
-    }
-    
-    public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+    @objc func didTapCancel() {
         onDismissCallback?(self)
     }
 }
-*/

@@ -8,6 +8,7 @@ Pod::Spec.new do |s|
   s.source           = { git: "https://github.com/lacyrhoades/MultipleAssetRow.git" }
   s.ios.deployment_target = '10.0'
   s.requires_arc = true
-  s.ios.source_files = 'Shared/**/*', 'MultipleAssetRow/**/*'
+  s.ios.source_files = 'MultipleAssetRow/**/*'
+  s.resource_bundles = { 'MultipleAssetRowResources' => ['Shared/**/*'] }
   s.dependency 'Eureka', '~> 4.0'
 end

@@ -9,7 +9,7 @@ import Foundation
 
 public typealias AssetID = String
 public struct Assets {
-    var value: [AssetID]
+    public var value: [AssetID]
 }
 
 extension Assets: Equatable {

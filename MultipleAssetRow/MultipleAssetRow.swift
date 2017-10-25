@@ -32,11 +32,11 @@ open class _MultipleAssetRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType
     public required init(tag: String?) {
         super.init(tag: tag)
 
-        presentationMode = .presentModally(controllerProvider: ControllerProvider.callback {
+        presentationMode = .show(controllerProvider: ControllerProvider.callback {
             return MultipleAssetPickerRowController()
         }, onDismiss: { [weak self] vc in
             self?.select()
-            vc.dismiss(animated: true)
+            vc.navigationController?.popViewController(animated: true)
         })
 
         self.displayValueFor = nil
@@ -84,12 +84,12 @@ open class _MultipleAssetRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType
     }
 
     if case .yes(let style) = clearAction, value != nil {
-      let clearPhotoOption = UIAlertAction(title: NSLocalizedString("Clear Photo", comment: ""), style: style) { [weak self] _ in
+      let clearOption = UIAlertAction(title: NSLocalizedString("Clear selection", comment: ""), style: style) { [weak self] _ in
         self?.value = nil
         self?.updateCell()
       }
 
-      sourceActionSheet.addAction(clearPhotoOption)
+      sourceActionSheet.addAction(clearOption)
     }
 
     if sourceActionSheet.actions.count == 1 {
