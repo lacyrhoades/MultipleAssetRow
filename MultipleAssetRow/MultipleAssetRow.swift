@@ -12,7 +12,7 @@ protocol MultipleAssetRowProtocol {
     var placeholderImages: [UIImage] { get }
 }
 
-open class _MultipleAssetRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType, MultipleAssetRowProtocol where Cell: BaseCell, Cell.Value == Assets {
+open class _MultipleAssetRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType, MultipleAssetRowProtocol where Cell: BaseCell, Cell.Value == AssetSet {
     
     public typealias PresenterRow = MultipleAssetPickerRowController
 

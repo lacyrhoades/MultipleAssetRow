@@ -6,7 +6,7 @@ import Foundation
 /// Selector Controller used to pick an image
 open class MultipleAssetPickerRowController: UIViewController, TypedRowControllerType {
     // for TypedRowControllerType
-    public var row: RowOf<Assets>!
+    public var row: RowOf<AssetSet>!
     public var onDismissCallback: ((UIViewController) -> Void)?
     
     // for us to know what kind of UI to use
@@ -38,13 +38,13 @@ open class MultipleAssetPickerRowController: UIViewController, TypedRowControlle
     }
     
     @objc func didTapDone() {
-        self.pickerController.getSelectedAssetIDs(withProgress: { (progress) in
+        self.pickerController.getSelectedAssets(withProgress: { (progress) in
             print(progress)
-        }) { (assetIDs) in
-            if assetIDs.isEmpty {
+        }) { (assets) in
+            if assets.isEmpty {
                 self.row.value = nil
             } else {
-                self.row.value = Assets(value: assetIDs)
+                self.row.value = AssetSet(contents: assets)
             }
             self.onDismissCallback?(self)
         }

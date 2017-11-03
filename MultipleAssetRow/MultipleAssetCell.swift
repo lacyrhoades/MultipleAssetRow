@@ -3,7 +3,7 @@
 import Eureka
 import Photos
 
-public final class MultipleAssetCell: PushSelectorCell<Assets> {
+public final class MultipleAssetCell: PushSelectorCell<AssetSet> {
     var assetView = MultipleAssetView()
     
     public override func setup() {
@@ -29,7 +29,7 @@ public final class MultipleAssetCell: PushSelectorCell<Assets> {
         super.update()
         
         selectionStyle = row.isDisabled ? .none : .default
-        (accessoryView as? MultipleAssetView)?.assetIDs = row.value?.value ?? []
+        (accessoryView as? MultipleAssetView)?.assets = row.value
     }
 }
 
@@ -37,9 +37,9 @@ class MultipleAssetView: UIView {
     var scrollView = UIScrollView()
     var stackView = CenteredStackView()
     
-    var assetIDs: [AssetID] = [] {
+    var assets: AssetSet? {
         didSet {
-            self.showAssetIDs()
+            self.showAssets()
         }
     }
     
@@ -69,21 +69,21 @@ class MultipleAssetView: UIView {
         NSLayoutConstraint.activate([
             NSLayoutConstraint(item: scrollView, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1, constant: 0),
             NSLayoutConstraint(item: scrollView, attribute: .trailing, relatedBy: .equal, toItem: self, attribute: .trailing, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: scrollView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: scrollView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: scrollView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: margin),
+            NSLayoutConstraint(item: scrollView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: margin * -1),
             
             NSLayoutConstraint(item: stackView, attribute: .leading, relatedBy: .equal, toItem: scrollView, attribute: .leading, multiplier: 1, constant: 0),
             NSLayoutConstraint(item: stackView, attribute: .trailing, relatedBy: .equal, toItem: scrollView, attribute: .trailing, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: stackView, attribute: .top, relatedBy: .equal, toItem: scrollView, attribute: .top, multiplier: 1, constant: margin),
-            NSLayoutConstraint(item: scrollView, attribute: .bottom, relatedBy: .equal, toItem: stackView, attribute: .bottom, multiplier: 1, constant: margin),
+            NSLayoutConstraint(item: stackView, attribute: .top, relatedBy: .equal, toItem: scrollView, attribute: .top, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: stackView, attribute: .bottom, relatedBy: .equal, toItem: scrollView, attribute: .bottom, multiplier: 1, constant: 0),
             
             NSLayoutConstraint(item: stackView, attribute: .height, relatedBy: .equal, toItem: scrollView, attribute: .height, multiplier: 1, constant: 0),
             widthConstraint,
         ])
     }
     
-    func showAssetIDs() {
-        if self.assetIDs.isEmpty {
+    func showAssets() {
+        guard let assets = self.assets, assets.isEmpty == false else {
             DispatchQueue.main.async {
                 self.stackView.removeAllArrangedSubviews()
             }
@@ -136,7 +136,11 @@ class MultipleAssetView: UIView {
         
         let options = PHFetchOptions()
         
-        let fetch = PHAsset.fetchAssets(withLocalIdentifiers: self.assetIDs, options: options)
+        let assetIDs = assets.contents.map { (eachAsset) -> AssetID in
+            return eachAsset.id
+        }
+        
+        let fetch = PHAsset.fetchAssets(withLocalIdentifiers: assetIDs, options: options)
         
         var results: [AssetID: UIImage] = [:]
         
@@ -160,7 +164,7 @@ class MultipleAssetView: UIView {
             // So we sort them here back to the order which was requested
             var sortedResults: [UIImage] = []
             
-            for eachAssetID in self.assetIDs {
+            for eachAssetID in assetIDs {
                 if let asset = results[eachAssetID] {
                     sortedResults.append(asset)
                 }
