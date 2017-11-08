@@ -15,27 +15,37 @@ public final class MultipleAssetCell: PushSelectorCell<AssetSet> {
             return height
         }
         
+        selectionStyle = .none
         accessoryType = .none
         editingAccessoryType = .none
         
-        accessoryView = assetView
-        editingAccessoryView = accessoryView
-
-        assetView.frame = self.contentView.bounds
-        assetView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        assetView.frame = self.bounds
+        assetView.translatesAutoresizingMaskIntoConstraints = false
+        self.contentView.addSubview(assetView)
+        
+        NSLayoutConstraint.activate([
+            NSLayoutConstraint(item: assetView, attribute: .width, relatedBy: .equal, toItem: contentView, attribute: .width, multiplier: 0.5, constant: 0),
+            NSLayoutConstraint(item: assetView, attribute: .trailing, relatedBy: .equal, toItem: contentView, attribute: .trailing, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: assetView, attribute: .top, relatedBy: .equal, toItem: contentView, attribute: .top, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: assetView, attribute: .bottom, relatedBy: .equal, toItem: contentView, attribute: .bottom, multiplier: 1, constant: 0),
+            ])
     }
     
     public override func update() {
         super.update()
         
+        accessoryType = .none
+        editingAccessoryType = accessoryType
         selectionStyle = row.isDisabled ? .none : .default
-        (accessoryView as? MultipleAssetView)?.assets = row.value
+        
+        self.assetView.assets = row.value
     }
 }
 
 class MultipleAssetView: UIView {
     var scrollView = UIScrollView()
     var stackView = CenteredStackView()
+    var emptyLabel = UILabel()
     
     var assets: AssetSet? {
         didSet {
@@ -61,16 +71,28 @@ class MultipleAssetView: UIView {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(stackView)
         
+        emptyLabel.textAlignment = .right
+        emptyLabel.font = UIFont.systemFont(ofSize: 18.0)
+        emptyLabel.textColor = UIColor.gray
+        emptyLabel.text = "None"
+        emptyLabel.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(emptyLabel)
+        
         let widthConstraint = NSLayoutConstraint(item: stackView, attribute: .width, relatedBy: .equal, toItem: scrollView, attribute: .width, multiplier: 1, constant: 0)
         widthConstraint.priority = .defaultLow
-        
-        let margin: CGFloat = 8.0
+
+        let margin: CGFloat = 16.0
         
         NSLayoutConstraint.activate([
+            NSLayoutConstraint(item: emptyLabel, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: emptyLabel, attribute: .trailing, relatedBy: .equal, toItem: self, attribute: .trailing, multiplier: 1, constant: -1 * margin),
+            NSLayoutConstraint(item: emptyLabel, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: emptyLabel, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: 0),
+            
             NSLayoutConstraint(item: scrollView, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: scrollView, attribute: .trailing, relatedBy: .equal, toItem: self, attribute: .trailing, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: scrollView, attribute: .trailing, relatedBy: .equal, toItem: self, attribute: .trailing, multiplier: 1, constant: -1 * margin),
             NSLayoutConstraint(item: scrollView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: margin),
-            NSLayoutConstraint(item: scrollView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: margin * -1),
+            NSLayoutConstraint(item: scrollView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: -1 * margin),
             
             NSLayoutConstraint(item: stackView, attribute: .leading, relatedBy: .equal, toItem: scrollView, attribute: .leading, multiplier: 1, constant: 0),
             NSLayoutConstraint(item: stackView, attribute: .trailing, relatedBy: .equal, toItem: scrollView, attribute: .trailing, multiplier: 1, constant: 0),
@@ -83,6 +105,10 @@ class MultipleAssetView: UIView {
     }
     
     func showAssets() {
+        DispatchQueue.main.async {
+            self.emptyLabel.isHidden = (self.assets?.isEmpty ?? true) == false
+        }
+        
         guard let assets = self.assets, assets.isEmpty == false else {
             DispatchQueue.main.async {
                 self.stackView.removeAllArrangedSubviews()
@@ -140,38 +166,40 @@ class MultipleAssetView: UIView {
             return eachAsset.id
         }
         
-        let fetch = PHAsset.fetchAssets(withLocalIdentifiers: assetIDs, options: options)
-        
-        var results: [AssetID: UIImage] = [:]
-        
-        fetch.enumerateObjects({ (asset, index, test) in
-            imageRequests.enter()
+        DispatchQueue.global().async {
+            let fetch = PHAsset.fetchAssets(withLocalIdentifiers: assetIDs, options: options)
             
-            let options = PHImageRequestOptions()
+            var results: [AssetID: UIImage] = [:]
             
-            PHCachingImageManager.default().requestImageData(for: asset, options: options, resultHandler: { (maybeData, _, orientation, _) in
-                if let data = maybeData, let image = UIImage(data: data) {
-                    let thumbnail = image.resized(toMaxSize: size)
-                    results[asset.localIdentifier] = thumbnail
+            fetch.enumerateObjects({ (asset, index, test) in
+                imageRequests.enter()
+                
+                let options = PHImageRequestOptions()
+                
+                PHCachingImageManager.default().requestImageData(for: asset, options: options, resultHandler: { (maybeData, _, orientation, _) in
+                    if let data = maybeData, let image = UIImage(data: data) {
+                        let thumbnail = image.resized(toMaxSize: size)
+                        results[asset.localIdentifier] = thumbnail
+                    }
+                    
+                    imageRequests.leave()
+                })
+            })
+            
+            imageRequests.notify(queue: DispatchQueue.main, execute: {
+                // The PHAsset fetch gives results in random order
+                // So we sort them here back to the order which was requested
+                var sortedResults: [UIImage] = []
+                
+                for eachAssetID in assetIDs {
+                    if let asset = results[eachAssetID] {
+                        sortedResults.append(asset)
+                    }
                 }
                 
-                imageRequests.leave()
+                show(sortedResults)
             })
-        })
-        
-        imageRequests.notify(queue: DispatchQueue.main, execute: {
-            // The PHAsset fetch gives results in random order
-            // So we sort them here back to the order which was requested
-            var sortedResults: [UIImage] = []
-            
-            for eachAssetID in assetIDs {
-                if let asset = results[eachAssetID] {
-                    sortedResults.append(asset)
-                }
-            }
-            
-            show(sortedResults)
-        })
+        }
     }
 }
 
@@ -188,9 +216,7 @@ class CenteredStackView: UIStackView {
         self.addArrangedSubview(trailingView)
         
         NSLayoutConstraint.activate([
-            NSLayoutConstraint(item: leadingView, attribute: .width, relatedBy: .equal, toItem: trailingView, attribute: .width, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: leadingView, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: trailingView, attribute: .trailing, relatedBy: .equal, toItem: self, attribute: .trailing, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: leadingView, attribute: .width, relatedBy: .equal, toItem: trailingView, attribute: .width, multiplier: 1, constant: 0)
         ])
     }
     

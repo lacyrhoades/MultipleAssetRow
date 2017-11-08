@@ -87,6 +87,9 @@ open class _MultipleAssetRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType
       let clearOption = UIAlertAction(title: NSLocalizedString("Clear selection", comment: ""), style: style) { [weak self] _ in
         self?.value = nil
         self?.updateCell()
+        DispatchQueue.main.async {
+            self?.reload()
+        }
       }
 
       sourceActionSheet.addAction(clearOption)

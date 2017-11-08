@@ -6,8 +6,21 @@
 
 import UIKit
 
-public typealias ProgressAction = (_: Float) -> ()
+public struct FetchProgress {
+    public var soFar: Int
+    public var total: Int
+    
+    public init(total: Int) {
+        self.total = total
+        self.soFar = 0
+    }
+}
+public typealias ProgressAction = (_: FetchProgress) -> ()
 public typealias FinishedAction = (_: [Asset]) -> ()
+
+class NavigationButton: UIButton {
+    var path: String?
+}
 
 public enum MultipleAssetPickerAssetType {
     case file
@@ -33,6 +46,11 @@ public struct NavigationItem {
     public init(title: String) {
         self.title = title
     }
+    
+    public init(title: String, path: String) {
+        self.title = title
+        self.path = path
+    }
 }
 
 public protocol MultipleAssetPickerDelegate: class {
@@ -45,18 +63,25 @@ public protocol MultipleAssetPickerDelegate: class {
     func selectedAssets(forPaths: [String], withProgress: @escaping ProgressAction, andThen: @escaping FinishedAction)
     func canSelect(at: Int) -> Bool
     var loadingText: String { get }
+    func fetchProgressText(forProgress: FetchProgress) -> String
     var navigationItems: [NavigationItem] { get }
+    func navigate(toPath: String?)
 }
 
 class MultipleAssetPickerController: UIViewController {
     var sourceType: MultipleAssetRowSourceTypes!
     weak var assetDelegate: MultipleAssetPickerDelegate?
     
+    var stackView = UIStackView()
+    
     var titleLabel = UILabel()
     var navigationStackView = UIStackView()
     var collectionView: UICollectionView!
+    var grayoutView = UIView()
     var activitySpinner = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
     var loadingLabel = UILabel()
+    var toolbar = UIStackView()
+    var selectAllButton = UIButton(type: .custom)
     
     var selections: [Int] = []
     
@@ -73,6 +98,26 @@ class MultipleAssetPickerController: UIViewController {
     }
     
     override func viewDidLoad() {
+        stackView.axis = .vertical
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(stackView)
+        
+        NSLayoutConstraint.activate([
+            NSLayoutConstraint(item: stackView, attribute: .leading, relatedBy: .equal, toItem: self.view, attribute: .leading, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: stackView, attribute: .trailing, relatedBy: .equal, toItem: self.view, attribute: .trailing, multiplier: 1, constant: 0),
+        ])
+        
+        titleLabel.textColor = UIColor.darkText
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 44.0)
+        titleLabel.text = self.title
+        titleLabel.textAlignment = .center
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        stackView.addArrangedSubview(titleLabel)
+        
+        navigationStackView.axis = .horizontal
+        navigationStackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.addArrangedSubview(navigationStackView)
+        
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 0.0
         layout.minimumInteritemSpacing = 0.0
@@ -99,16 +144,37 @@ class MultipleAssetPickerController: UIViewController {
         self.assetDelegate?.loadAssets(atPath: nil)
         
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(collectionView)
+        stackView.addArrangedSubview(collectionView)
         
-        titleLabel.textColor = UIColor.darkText
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 44.0)
-        titleLabel.text = self.title
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(titleLabel)
+        toolbar.axis = .horizontal
+        toolbar.distribution = .fillEqually
+        toolbar.translatesAutoresizingMaskIntoConstraints = false
+        stackView.addArrangedSubview(toolbar)
         
-        navigationStackView.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(navigationStackView)
+        NSLayoutConstraint.activate([
+            NSLayoutConstraint(item: toolbar, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 40.0)
+        ])
+        
+        toolbar.addArrangedSubview(UIView())
+        toolbar.addArrangedSubview(UIView())
+        selectAllButton.setTitle("Select all", for: .normal)
+        selectAllButton.setTitle("Clear selection", for: .selected)
+        selectAllButton.setTitleColor(UIColor.linkBlue, for: .normal)
+        selectAllButton.addTarget(self, action: #selector(didTapSelectAll(_:)), for: .touchUpInside)
+        toolbar.addArrangedSubview(selectAllButton)
+        
+        self.grayoutView.isHidden = true
+        self.grayoutView.backgroundColor = .white
+        self.grayoutView.alpha = 0.8
+        self.grayoutView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(self.grayoutView)
+        
+        NSLayoutConstraint.activate([
+            NSLayoutConstraint(item: grayoutView, attribute: .leading, relatedBy: .equal, toItem: collectionView, attribute: .leading, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: grayoutView, attribute: .trailing, relatedBy: .equal, toItem: collectionView, attribute: .trailing, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: grayoutView, attribute: .top, relatedBy: .equal, toItem: collectionView, attribute: .top, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: grayoutView, attribute: .bottom, relatedBy: .equal, toItem: collectionView, attribute: .bottom, multiplier: 1, constant: 0)
+            ])
         
         activitySpinner.color = .gray
         activitySpinner.hidesWhenStopped = true
@@ -120,8 +186,9 @@ class MultipleAssetPickerController: UIViewController {
             NSLayoutConstraint(item: activitySpinner, attribute: .centerY, relatedBy: .equal, toItem: collectionView, attribute: .centerY, multiplier: 1, constant: 0)
         ])
         
-        self.loadingLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.loadingLabel.font = UIFont.systemFont(ofSize: 26.0)
+        loadingLabel.translatesAutoresizingMaskIntoConstraints = false
+        loadingLabel.font = UIFont.systemFont(ofSize: 26.0)
+        loadingLabel.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(self.loadingLabel)
         
         NSLayoutConstraint.activate([
@@ -129,43 +196,41 @@ class MultipleAssetPickerController: UIViewController {
             NSLayoutConstraint(item: loadingLabel, attribute: .bottom, relatedBy: .equal, toItem: activitySpinner, attribute: .top, multiplier: 1, constant: -1 * 12.0)
         ])
         
-        self.view.addConstraint(NSLayoutConstraint(item: collectionView, attribute: .centerX, relatedBy: .equal, toItem: self.view, attribute: .centerX, multiplier: 1, constant: 0))
-        self.view.addConstraint(NSLayoutConstraint(item: titleLabel, attribute: .centerX, relatedBy: .equal, toItem: self.view, attribute: .centerX, multiplier: 1, constant: 0))
-        
-        self.view.addConstraint(NSLayoutConstraint(item: collectionView, attribute: .width, relatedBy: .equal, toItem: self.view, attribute: .width, multiplier: 1, constant: 0.0))
-        
-        let matchWidth = NSLayoutConstraint(item: collectionView, attribute: .width, relatedBy: .equal, toItem: self.view, attribute: .width, multiplier: 1, constant: 0)
-        matchWidth.priority = UILayoutPriority.defaultLow
-        self.view.addConstraint(matchWidth)
-        
-        NSLayoutConstraint.activate([
-            NSLayoutConstraint(item: navigationStackView, attribute: .width, relatedBy: .equal, toItem: collectionView, attribute: .width, multiplier: 1, constant: 0)
-        ])
-        
         if #available(iOS 11, *) {
             let guide = view.safeAreaLayoutGuide
             NSLayoutConstraint.activate([
-                self.titleLabel.topAnchor.constraintEqualToSystemSpacingBelow(guide.topAnchor, multiplier: 1.0),
-                navigationStackView.topAnchor.constraintEqualToSystemSpacingBelow(self.titleLabel.bottomAnchor, multiplier: 1.0),
-              collectionView.topAnchor.constraintEqualToSystemSpacingBelow(self.navigationStackView.bottomAnchor, multiplier: 1.0),
-              guide.bottomAnchor.constraintEqualToSystemSpacingBelow(self.collectionView.bottomAnchor, multiplier: 1.0)
+                self.stackView.topAnchor.constraintEqualToSystemSpacingBelow(guide.topAnchor, multiplier: 1.0),
+                guide.bottomAnchor.constraintEqualToSystemSpacingBelow(self.stackView.bottomAnchor, multiplier: 1.0)
             ])
         } else {
             let space: CGFloat = 8.0
             NSLayoutConstraint.activate([
-                self.titleLabel.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor, constant: space),
-                self.navigationStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: space),
-                self.collectionView.topAnchor.constraint(equalTo: navigationStackView.bottomAnchor, constant: space),
-                bottomLayoutGuide.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: space)
+                self.stackView.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor, constant: space),
+                bottomLayoutGuide.topAnchor.constraint(equalTo: stackView.bottomAnchor, constant: space)
             ])
         }
+        
+        NSLayoutConstraint.activate([
+            NSLayoutConstraint(item: titleLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 56.0),
+            NSLayoutConstraint(item: navigationStackView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 36.0)
+        ])
         
         self.showLoading()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.parent?.navigationItem.rightBarButtonItem?.isEnabled = self.selections.isEmpty == false
+        self.updateSelectionUI()
+    }
+    
+    func showFetched(progress: FetchProgress) {
+        let text = self.assetDelegate?.fetchProgressText(forProgress: progress)
+        DispatchQueue.main.async {
+            self.grayoutView.isHidden = false
+            self.loadingLabel.text = text
+            self.loadingLabel.isHidden = false
+            self.activitySpinner.startAnimating()
+        }
     }
     
     func showLoading() {
@@ -180,21 +245,46 @@ class MultipleAssetPickerController: UIViewController {
     }
     
     func refreshNavigationItems() {
-        self.navigationStackView.arrangedSubviews.forEach { (eachView) in
-            self.navigationStackView.removeArrangedSubview(eachView)
+        DispatchQueue.main.async {
+            self.navigationStackView.arrangedSubviews.forEach { (eachView) in
+                self.navigationStackView.removeArrangedSubview(eachView)
+            }
+            
+            let firstView = UIView()
+            firstView.translatesAutoresizingMaskIntoConstraints = false
+            let lastView = UIView()
+            lastView.translatesAutoresizingMaskIntoConstraints = false
+            
+            self.navigationStackView.addArrangedSubview(firstView)
+            for item in self.assetDelegate?.navigationItems ?? [] {
+                let button = NavigationButton()
+                button.path = item.path
+                button.addTarget(self, action: #selector(self.didTapNavigationItem(_:)), for: .touchUpInside)
+                button.setTitle(item.title, for: .normal)
+                button.setTitleColor(UIColor.linkBlue, for: .normal)
+                self.navigationStackView.addArrangedSubview(button)
+                
+                let label = UILabel()
+                label.text = "/"
+                self.navigationStackView.addArrangedSubview(label)
+            }
+            self.navigationStackView.addArrangedSubview(lastView)
+            
+            NSLayoutConstraint.activate([
+                NSLayoutConstraint(item: firstView, attribute: .width, relatedBy: .equal, toItem: lastView, attribute: .width, multiplier: 1, constant: 0)
+            ])
         }
-        
-        for item in self.assetDelegate?.navigationItems ?? [] {
-            let button = UIButton()
-            button.setTitle(item.title, for: .normal)
-            self.navigationStackView.addArrangedSubview(button)
-        }
+    }
+    
+    @objc func didTapNavigationItem(_ button: NavigationButton) {
+        self.assetDelegate?.navigate(toPath: button.path)
+        self.select(nil)
     }
 }
 
 extension MultipleAssetPickerController: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: self.collectionView.bounds.size.width, height: 56.0)
+        return CGSize(width: self.collectionView.bounds.size.width, height: 86.0)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -219,7 +309,7 @@ extension MultipleAssetPickerController: UICollectionViewDelegate, UICollectionV
             self.selections = []
         }
         
-        self.parent?.navigationItem.rightBarButtonItem?.isEnabled = self.selections.isEmpty == false
+        self.updateSelectionUI()
     }
     
     func deSelect(_ row: Int) {
@@ -227,7 +317,7 @@ extension MultipleAssetPickerController: UICollectionViewDelegate, UICollectionV
             self.selections.remove(at: index)
         }
         
-        self.parent?.navigationItem.rightBarButtonItem?.isEnabled = self.selections.isEmpty == false
+        self.updateSelectionUI()
     }
     
     func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
@@ -257,5 +347,41 @@ extension MultipleAssetPickerController: UICollectionViewDataSource {
             pickerCell.asset = self.assetDelegate?.asset(atIndex: indexPath.row)
         }
         return cell
+    }
+}
+
+extension MultipleAssetPickerController {
+    @objc func didTapSelectAll(_ button: UIButton) {
+        if button.isSelected {
+            self.selections = []
+            for row in 0...(self.assetDelegate?.numberOfAssets ?? 0) {
+                collectionView.deselectItem(at: IndexPath(row: row, section: 0), animated: true)
+            }
+        } else {
+            for row in 0...(self.assetDelegate?.numberOfAssets ?? 0) {
+                if let asset = self.assetDelegate?.asset(atIndex: row) {
+                    if asset.type == .image {
+                        self.collectionView.selectItem(at: IndexPath(row: row, section: 0), animated: true, scrollPosition: .centeredHorizontally)
+                        self.select(row)
+                    }
+                }
+            }
+        }
+        
+        self.updateSelectionUI()
+    }
+    
+    func updateSelectionUI() {
+        self.selectAllButton.isSelected = self.selections.isEmpty == false
+        self.parent?.navigationItem.rightBarButtonItem?.isEnabled = self.selections.isEmpty == false
+    }
+}
+
+extension UIColor {
+    static var linkBlue: UIColor {
+        return UIColor(red: 0.2, green: 0.2, blue: 1.0, alpha: 1.0)
+    }
+    static var backgroundGray: UIColor {
+        return UIColor(red: 0.9, green: 0.9, blue: 0.9, alpha: 1.0)
     }
 }

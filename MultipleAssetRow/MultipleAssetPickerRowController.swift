@@ -18,7 +18,7 @@ open class MultipleAssetPickerRowController: UIViewController, TypedRowControlle
     open override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.backgroundColor = UIColor.lightGray
+        self.view.backgroundColor = UIColor.backgroundGray
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(didTapDone))
         self.navigationItem.rightBarButtonItem?.isEnabled = false
@@ -39,7 +39,7 @@ open class MultipleAssetPickerRowController: UIViewController, TypedRowControlle
     
     @objc func didTapDone() {
         self.pickerController.getSelectedAssets(withProgress: { (progress) in
-            print(progress)
+            self.pickerController.showFetched(progress: progress)
         }) { (assets) in
             if assets.isEmpty {
                 self.row.value = nil
