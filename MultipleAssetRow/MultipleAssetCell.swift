@@ -9,6 +9,8 @@ public final class MultipleAssetCell: PushSelectorCell<AssetSet> {
     public override func setup() {
         super.setup()
         
+        self.assetView.emptyLabel.text = (self.row as? MultipleAssetRow)?.placeholderText ?? "None"
+        
         self.height = {
             let height = CGFloat(self.row.value == nil ? 46.0 : 86.0)
             self.setNeedsLayout()

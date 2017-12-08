@@ -141,7 +141,6 @@ class MultipleAssetPickerController: UIViewController {
             self.collectionView.reloadData()
             self.refreshNavigationItems()
         }
-        self.assetDelegate?.loadAssets(atPath: nil)
         
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         stackView.addArrangedSubview(collectionView)
@@ -199,8 +198,7 @@ class MultipleAssetPickerController: UIViewController {
         if #available(iOS 11, *) {
             let guide = view.safeAreaLayoutGuide
             NSLayoutConstraint.activate([
-                self.stackView.topAnchor.constraintEqualToSystemSpacingBelow(guide.topAnchor, multiplier: 1.0),
-                guide.bottomAnchor.constraintEqualToSystemSpacingBelow(self.stackView.bottomAnchor, multiplier: 1.0)
+                self.stackView.topAnchor.constraintEqualToSystemSpacingBelow(guide.topAnchor, multiplier: 1.0),                guide.bottomAnchor.constraintEqualToSystemSpacingBelow(self.stackView.bottomAnchor, multiplier: 1.0)
             ])
         } else {
             let space: CGFloat = 8.0
@@ -221,6 +219,7 @@ class MultipleAssetPickerController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.updateSelectionUI()
+        self.assetDelegate?.loadAssets(atPath: nil)
     }
     
     func showFetched(progress: FetchProgress) {

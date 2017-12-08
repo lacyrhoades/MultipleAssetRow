@@ -23,6 +23,7 @@ open class _MultipleAssetRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType
     open var onPresentCallback: ((FormViewController, PresenterRow) -> Void)?
 
     open var clearAction = MultipleAssetClearAction.yes(style: .destructive)
+    open var placeholderText: String?
     
     open var placeholderImages: [UIImage] = []
     
