@@ -19,6 +19,9 @@ public struct Asset {
 }
 
 public struct AssetSet {
+    public var sourceType: MultipleAssetRowSourceTypes?
+    public var path: String?
+    
     public var contents: [Asset]
     
     public var isEmpty: Bool {

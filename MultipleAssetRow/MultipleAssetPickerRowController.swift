@@ -38,15 +38,27 @@ open class MultipleAssetPickerRowController: UIViewController, TypedRowControlle
     }
     
     @objc func didTapDone() {
-        self.pickerController.getSelectedAssets(withProgress: { (progress) in
-            self.pickerController.showFetched(progress: progress)
-        }) { (assets) in
-            if assets.isEmpty {
-                self.row.value = nil
-            } else {
-                self.row.value = AssetSet(contents: assets)
-            }
+        
+        switch self.assetDelegate?.selectionMode {
+        case .some(.pathOnly):
+            var assetSet = AssetSet()
+            assetSet.sourceType = self.assetDelegate?.sourceType
+            assetSet.path = self.assetDelegate?.currentPath
+            self.row.value = assetSet
             self.onDismissCallback?(self)
+        case .some(.loadAsset):
+            self.pickerController.getSelectedAssets(withProgress: { (progress) in
+                self.pickerController.showFetched(progress: progress)
+            }) { (assets) in
+                if assets.isEmpty {
+                    self.row.value = nil
+                } else {
+                    self.row.value = AssetSet(contents: assets)
+                }
+                self.onDismissCallback?(self)
+            }
+        default:
+            return
         }
     }
     

@@ -31,7 +31,7 @@ public enum MultipleAssetPickerAssetType {
 public struct MultipleAssetPickerAsset {
     var name: String
     var path: String
-    var type: MultipleAssetPickerAssetType
+    public var type: MultipleAssetPickerAssetType
     public init(name: String, path: String, type: MultipleAssetPickerAssetType) {
         self.name = name
         self.path = path
@@ -54,6 +54,7 @@ public struct NavigationItem {
 }
 
 public protocol MultipleAssetPickerDelegate: class {
+    var currentPath: String { get }
     var sourceType: MultipleAssetRowSourceTypes { get set }
     func loadAssets(atPath: String?)
     var preAssetChangeAction: (() -> ())? { get set }
@@ -66,6 +67,7 @@ public protocol MultipleAssetPickerDelegate: class {
     func fetchProgressText(forProgress: FetchProgress) -> String
     var navigationItems: [NavigationItem] { get }
     func navigate(toPath: String?)
+    var selectionMode: MultipleAssetSelectionMode { get set }
 }
 
 class MultipleAssetPickerController: UIViewController {
@@ -372,7 +374,7 @@ extension MultipleAssetPickerController {
     
     func updateSelectionUI() {
         self.selectAllButton.isSelected = self.selections.isEmpty == false
-        self.parent?.navigationItem.rightBarButtonItem?.isEnabled = self.selections.isEmpty == false
+        self.parent?.navigationItem.rightBarButtonItem?.isEnabled = self.selections.isEmpty == false || self.assetDelegate?.selectionMode == .pathOnly
     }
 }
 

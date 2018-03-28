@@ -3,6 +3,11 @@
 import Eureka
 import Foundation
 
+public enum MultipleAssetSelectionMode {
+    case loadAsset
+    case pathOnly
+}
+
 public enum MultipleAssetClearAction {
     case no
     case yes(style: UIAlertActionStyle)
@@ -29,6 +34,7 @@ open class _MultipleAssetRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType
     
     open var availableSourceTypes: [MultipleAssetRowSourceTypes] = []
     open weak var assetDelegate: MultipleAssetPickerDelegate?
+    open var selectionMode: MultipleAssetSelectionMode = .loadAsset
 
     public required init(tag: String?) {
         super.init(tag: tag)
@@ -47,7 +53,10 @@ open class _MultipleAssetRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType
         if let presentationMode = presentationMode, !isDisabled, let controller = presentationMode.makeController() {
             controller.row = self
             controller.assetSourceType = sourceType
+            
+            self.assetDelegate?.selectionMode = self.selectionMode
             controller.assetDelegate = self.assetDelegate
+            
             onPresentCallback?(cell.formViewController()!, controller)
             presentationMode.present(controller, row: self, presentingController: cell.formViewController()!)
         }
@@ -96,8 +105,8 @@ open class _MultipleAssetRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType
       sourceActionSheet.addAction(clearOption)
     }
 
-    if sourceActionSheet.actions.count == 1 {
-      // no sheet?
+    if sourceActionSheet.actions.count == 1, let sourceType = self.availableSourceTypes.first {
+      self.displayMultipleAssetPickerRowController(sourceType)
     } else {
       let cancelOption = UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel, handler: nil)
 

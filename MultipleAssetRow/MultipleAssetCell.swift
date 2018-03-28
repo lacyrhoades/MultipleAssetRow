@@ -9,11 +9,26 @@ public final class MultipleAssetCell: PushSelectorCell<AssetSet> {
     public override func setup() {
         super.setup()
         
-        self.assetView.emptyLabel.text = (self.row as? MultipleAssetRow)?.placeholderText ?? "None"
+        if let path = self.row.value?.path, let type = self.row.value?.sourceType {
+            self.assetView.emptyLabel.text = String(format: "\"%@\" via %@", path.isEmpty ? "/" : path, type.localizedString)
+        } else {
+            self.assetView.emptyLabel.text = (self.row as? MultipleAssetRow)?.placeholderText ?? "None"
+        }
+        
         
         self.height = {
-            let height = CGFloat(self.row.value == nil ? 46.0 : 86.0)
+            var height: CGFloat = 46.0
+            
+            if let val = self.row.value {
+                if let _ = val.path {
+                    height = CGFloat(46.0)
+                } else {
+                    height = CGFloat(86.0)
+                }
+            }
+            
             self.setNeedsLayout()
+            
             return height
         }
         
@@ -35,6 +50,12 @@ public final class MultipleAssetCell: PushSelectorCell<AssetSet> {
     
     public override func update() {
         super.update()
+        
+        if let path = self.row.value?.path, let type = self.row.value?.sourceType {
+            self.assetView.emptyLabel.text = String(format: "\"%@\" via %@", path.isEmpty ? "/" : path, type.localizedString)
+        } else {
+            self.assetView.emptyLabel.text = (self.row as? MultipleAssetRow)?.placeholderText ?? "None"
+        }
         
         accessoryType = .none
         editingAccessoryType = accessoryType
@@ -112,9 +133,17 @@ class MultipleAssetView: UIView {
         }
         
         guard let assets = self.assets, assets.isEmpty == false else {
+            if let path = self.assets?.path, let sourceType = self.assets?.sourceType {
+                DispatchQueue.main.async {
+                    self.emptyLabel.isHidden = false
+                    self.emptyLabel.text = String(format: "\"%@\" via %@", path.isEmpty ? "/" : path, sourceType.localizedString)
+                }
+            }
+            
             DispatchQueue.main.async {
                 self.stackView.removeAllArrangedSubviews()
             }
+            
             return
         }
         
