@@ -9,7 +9,7 @@ import Foundation
 
 public typealias AssetID = String
 
-public struct Asset {
+public struct MultiAsset {
     public var name: String
     public var id: AssetID
     public init(name: String, id: AssetID) {
@@ -22,7 +22,7 @@ public struct AssetSet {
     public var sourceType: MultipleAssetRowSourceTypes?
     public var path: String?
     
-    public var contents: [Asset]
+    public var contents: [MultiAsset]
     
     public var isEmpty: Bool {
         return self.contents.isEmpty
@@ -32,11 +32,11 @@ public struct AssetSet {
         self.contents = []
     }
     
-    public init(contents: [Asset]) {
+    public init(contents: [MultiAsset]) {
         self.contents = contents
     }
 
-    public func appending(_ asset: Asset) -> AssetSet {
+    public func appending(_ asset: MultiAsset) -> AssetSet {
         var set = self
         set.contents.append(asset)
         return set
@@ -51,8 +51,8 @@ extension AssetSet: Equatable {
     }
 }
 
-extension Asset: Equatable {
-    public static func == (lhs: Asset, rhs: Asset) -> Bool {
+extension MultiAsset: Equatable {
+    public static func == (lhs: MultiAsset, rhs: MultiAsset) -> Bool {
         return lhs.id == rhs.id
     }
 }

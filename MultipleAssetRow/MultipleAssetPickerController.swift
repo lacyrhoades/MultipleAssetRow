@@ -16,7 +16,7 @@ public struct FetchProgress {
     }
 }
 public typealias ProgressAction = (_: FetchProgress) -> ()
-public typealias FinishedAction = (_: [Asset]) -> ()
+public typealias FinishedAction = (_: [MultiAsset]) -> ()
 
 class NavigationButton: UIButton {
     var path: String?
