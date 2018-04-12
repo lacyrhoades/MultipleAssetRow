@@ -26,9 +26,11 @@ public enum MultipleAssetPickerAssetType {
     case file
     case image
     case folder
+    case addNew
 }
 
 public struct MultipleAssetPickerAsset {
+    public static let addNewPath: String = "add-new"
     var name: String
     var path: String
     public var type: MultipleAssetPickerAssetType
@@ -68,6 +70,7 @@ public protocol MultipleAssetPickerDelegate: class {
     var navigationItems: [NavigationItem] { get }
     func navigate(toPath: String?)
     var selectionMode: MultipleAssetSelectionMode { get set }
+    func presentAddDialog(overViewController: UIViewController, andThen: @escaping () -> ())
 }
 
 class MultipleAssetPickerController: UIViewController {
@@ -290,7 +293,12 @@ extension MultipleAssetPickerController: UICollectionViewDelegate, UICollectionV
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let asset = self.assetDelegate?.asset(atIndex: indexPath.row) {
-            if asset.type == .folder {
+            if asset.type == .addNew {
+                self.assetDelegate?.presentAddDialog(overViewController: self) {
+                    self.assetDelegate?.loadAssets(atPath: asset.path)
+                    self.select(nil)
+                }
+            } else if asset.type == .folder {
                 self.assetDelegate?.loadAssets(atPath: asset.path)
                 self.select(nil)
             } else {

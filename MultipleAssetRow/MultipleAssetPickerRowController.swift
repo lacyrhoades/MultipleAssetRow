@@ -39,6 +39,10 @@ open class MultipleAssetPickerRowController: UIViewController, TypedRowControlle
     
     @objc func didTapDone() {
         
+        // If you don't set this to nil
+        // The magic "did change" might not fire
+        self.row.value = nil
+        
         switch self.assetDelegate?.selectionMode {
         case .some(.pathOnly):
             var assetSet = AssetSet()

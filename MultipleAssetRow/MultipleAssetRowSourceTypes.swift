@@ -10,6 +10,7 @@ import Foundation
 public enum AssetSourceType: Int {
     case photoLibrary
     case dropbox
+    case smbShare
 }
 
 public struct MultipleAssetRowSourceTypes: OptionSet {
@@ -19,6 +20,7 @@ public struct MultipleAssetRowSourceTypes: OptionSet {
     
     public static let PhotoLibrary = MultipleAssetRowSourceTypes(.photoLibrary)
     public static let Dropbox = MultipleAssetRowSourceTypes(.dropbox)
+    public static let SMBShare = MultipleAssetRowSourceTypes(.smbShare)
     public static let All: MultipleAssetRowSourceTypes = [PhotoLibrary, Dropbox]
 }
 
@@ -29,6 +31,8 @@ extension MultipleAssetRowSourceTypes {
             return NSLocalizedString("Photo Library", comment: "")
         case MultipleAssetRowSourceTypes.Dropbox:
             return NSLocalizedString("Dropbox", comment: "")
+        case MultipleAssetRowSourceTypes.SMBShare:
+            return NSLocalizedString("Local Network Share", comment: "")
         case MultipleAssetRowSourceTypes.All:
             return NSLocalizedString("All", comment: "")
         default:

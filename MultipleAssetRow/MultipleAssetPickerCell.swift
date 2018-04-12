@@ -30,6 +30,8 @@ class MultipleAssetPickerCell: UICollectionViewCell {
                     icon.image = UIImage(named: "File", in: resourceBundle, compatibleWith: nil)
                 case .image:
                     icon.image = UIImage(named: "Image", in: resourceBundle, compatibleWith: nil)
+                case .addNew:
+                    icon.image = UIImage(named: "AddNew", in: resourceBundle, compatibleWith: nil)
                 }
             } else {
                 icon.image = nil
