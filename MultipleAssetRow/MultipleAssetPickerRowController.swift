@@ -20,10 +20,10 @@ open class MultipleAssetPickerRowController: UIViewController, TypedRowControlle
         
         self.view.backgroundColor = UIColor.backgroundGray
         
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(didTapDone))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(didTapSave))
         self.navigationItem.rightBarButtonItem?.isEnabled = false
         
-        pickerController.title = self.row.title
+        pickerController.title = self.assetDelegate?.selectorTitle(forSourceType: self.assetSourceType) ?? (self.row as? MultipleAssetRow)?.selectorTitle ?? self.row.title
         pickerController.sourceType = self.assetSourceType
         pickerController.assetDelegate = self.assetDelegate
         
@@ -37,10 +37,10 @@ open class MultipleAssetPickerRowController: UIViewController, TypedRowControlle
         self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[pickerView]|", options: [], metrics: [:], views: ["pickerView": self.pickerController.view]))
     }
     
-    @objc func didTapDone() {
+    @objc func didTapSave() {
         
         // If you don't set this to nil
-        // The magic "did change" might not fire
+        // The magic "did change" seems not to fire
         self.row.value = nil
         
         switch self.assetDelegate?.selectionMode {

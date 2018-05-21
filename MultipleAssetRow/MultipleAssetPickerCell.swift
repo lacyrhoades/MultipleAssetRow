@@ -28,8 +28,20 @@ class MultipleAssetPickerCell: UICollectionViewCell {
                     icon.image = UIImage(named: "Folder", in: resourceBundle, compatibleWith: nil)
                 case .file:
                     icon.image = UIImage(named: "File", in: resourceBundle, compatibleWith: nil)
+                    if let fetch = asset.fetchThumbnail {
+                        fetch() {
+                            image in
+                            self.icon.image = image
+                        }
+                    }
                 case .image:
                     icon.image = UIImage(named: "Image", in: resourceBundle, compatibleWith: nil)
+                    if let fetch = asset.fetchThumbnail {
+                        fetch() {
+                            image in
+                            self.icon.image = image
+                        }
+                    }
                 case .addNew:
                     icon.image = UIImage(named: "AddNew", in: resourceBundle, compatibleWith: nil)
                 }

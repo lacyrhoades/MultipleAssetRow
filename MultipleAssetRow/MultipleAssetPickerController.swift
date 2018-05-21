@@ -33,6 +33,7 @@ public struct MultipleAssetPickerAsset {
     public static let addNewPath: String = "add-new"
     var name: String
     var path: String
+    public var fetchThumbnail: ((@escaping (UIImage?) -> ()) -> ())?
     public var type: MultipleAssetPickerAssetType
     public init(name: String, path: String, type: MultipleAssetPickerAssetType) {
         self.name = name
@@ -71,6 +72,7 @@ public protocol MultipleAssetPickerDelegate: class {
     func navigate(toPath: String?)
     var selectionMode: MultipleAssetSelectionMode { get set }
     func presentAddDialog(overViewController: UIViewController, andThen: @escaping () -> ())
+    func selectorTitle(forSourceType: MultipleAssetRowSourceTypes) -> String?
 }
 
 class MultipleAssetPickerController: UIViewController {
@@ -238,14 +240,18 @@ class MultipleAssetPickerController: UIViewController {
     }
     
     func showLoading() {
-        self.loadingLabel.text = self.assetDelegate?.loadingText
-        self.loadingLabel.isHidden = false
-        self.activitySpinner.startAnimating()
+        DispatchQueue.main.async {
+            self.loadingLabel.text = self.assetDelegate?.loadingText
+            self.loadingLabel.isHidden = false
+            self.activitySpinner.startAnimating()
+        }
     }
     
     func hideLoading() {
-        self.loadingLabel.isHidden = true
-        self.activitySpinner.stopAnimating()
+        DispatchQueue.main.async {
+            self.loadingLabel.isHidden = true
+            self.activitySpinner.stopAnimating()
+        }
     }
     
     func refreshNavigationItems() {
@@ -288,7 +294,7 @@ class MultipleAssetPickerController: UIViewController {
 
 extension MultipleAssetPickerController: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: self.collectionView.bounds.size.width, height: 86.0)
+        return CGSize(width: self.collectionView.bounds.size.width, height: 120.0)
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -381,8 +387,14 @@ extension MultipleAssetPickerController {
     }
     
     func updateSelectionUI() {
+        self.selectAllButton.isHidden = self.assetDelegate?.selectionMode == .pathOnly
         self.selectAllButton.isSelected = self.selections.isEmpty == false
-        self.parent?.navigationItem.rightBarButtonItem?.isEnabled = self.selections.isEmpty == false || self.assetDelegate?.selectionMode == .pathOnly
+        
+        let someSelections = self.selections.isEmpty == false
+        let empty = self.assetDelegate?.currentPath.isEmpty ?? true
+        let pathOnly = self.assetDelegate?.selectionMode == .pathOnly
+        
+        self.parent?.navigationItem.rightBarButtonItem?.isEnabled = someSelections || (pathOnly && empty == false)
     }
 }
 

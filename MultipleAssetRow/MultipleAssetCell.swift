@@ -10,7 +10,7 @@ public final class MultipleAssetCell: PushSelectorCell<AssetSet> {
         super.setup()
         
         if let path = self.row.value?.path, let type = self.row.value?.sourceType {
-            self.assetView.emptyLabel.text = String(format: "\"%@\" via %@", path.isEmpty ? "/" : path, type.localizedString)
+            self.assetView.emptyLabel.text = labelString(forPath: path, andSourceType: type)
         } else {
             self.assetView.emptyLabel.text = (self.row as? MultipleAssetRow)?.placeholderText ?? "None"
         }
@@ -52,7 +52,7 @@ public final class MultipleAssetCell: PushSelectorCell<AssetSet> {
         super.update()
         
         if let path = self.row.value?.path, let type = self.row.value?.sourceType {
-            self.assetView.emptyLabel.text = String(format: "\"%@\" via %@", path.isEmpty ? "/" : path, type.localizedString)
+            self.assetView.emptyLabel.text = labelString(forPath: path, andSourceType: type)
         } else {
             self.assetView.emptyLabel.text = (self.row as? MultipleAssetRow)?.placeholderText ?? "None"
         }
@@ -62,6 +62,8 @@ public final class MultipleAssetCell: PushSelectorCell<AssetSet> {
         selectionStyle = row.isDisabled ? .none : .default
         
         self.assetView.assets = row.value
+        
+        self.assetView.scrollView.alpha = (row.value == nil) ? 0.0 : 1.0
     }
 }
 
@@ -136,7 +138,7 @@ class MultipleAssetView: UIView {
             if let path = self.assets?.path, let sourceType = self.assets?.sourceType {
                 DispatchQueue.main.async {
                     self.emptyLabel.isHidden = false
-                    self.emptyLabel.text = String(format: "\"%@\" via %@", path.isEmpty ? "/" : path, sourceType.localizedString)
+                    self.emptyLabel.text = labelString(forPath: path, andSourceType: sourceType)
                 }
             }
             
@@ -300,5 +302,19 @@ extension UIImage {
         UIGraphicsEndImageContext();
         return resultImage!
     }
+}
 
+func labelString(forPath path: String, andSourceType type: MultipleAssetRowSourceTypes) -> String {
+    return String(format: "\"%@\" via %@", path.isEmpty ? "/" : path.truncatedTail(length: 20), type.localizedString)
+}
+
+extension String {
+    func truncatedTail(length: Int, prefix: String? = "\u{2026}") -> String {
+        if self.count > length {
+            let min = index(endIndex, offsetBy: length * -1)
+            return (prefix ?? "") + self[min..<endIndex]
+        } else {
+            return self
+        }
+    }
 }
