@@ -195,6 +195,15 @@ class MultipleAssetView: UIView {
         
         let options = PHFetchOptions()
         
+        let images = assets.contents.compactMap { (eachAsset) -> UIImage? in
+            return eachAsset.image
+        }
+        
+        if images.count == assets.contents.count {
+            show(images)
+            return
+        }
+        
         let assetIDs = assets.contents.map { (eachAsset) -> AssetID in
             return eachAsset.id
         }

@@ -12,6 +12,7 @@ public typealias AssetID = String
 public struct MultiAsset {
     public var name: String
     public var id: AssetID
+    public var image: UIImage?
     public init(name: String, id: AssetID) {
         self.name = name
         self.id = id
