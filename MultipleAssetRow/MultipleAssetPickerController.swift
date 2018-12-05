@@ -257,7 +257,7 @@ class MultipleAssetPickerController: UIViewController {
     func refreshNavigationItems() {
         DispatchQueue.main.async {
             self.navigationStackView.arrangedSubviews.forEach { (eachView) in
-                self.navigationStackView.removeArrangedSubview(eachView)
+                eachView.removeFromSuperview()
             }
             
             let firstView = UIView()

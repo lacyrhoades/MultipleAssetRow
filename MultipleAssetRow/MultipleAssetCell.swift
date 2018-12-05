@@ -251,7 +251,7 @@ class CenteredStackView: UIStackView {
     
     func removeAllArrangedSubviews() {
         self.arrangedSubviews.forEach { (eachSubview) in
-            self.removeArrangedSubview(eachSubview)
+            eachSubview.removeFromSuperview()
         }
         
         self.addArrangedSubview(leadingView)
@@ -268,8 +268,8 @@ class CenteredStackView: UIStackView {
         if (length == 2) {
             super.insertArrangedSubview(view, at: 1)
         } else if (length > 2) {
-            self.removeArrangedSubview(self.leadingView)
-            self.removeArrangedSubview(self.trailingView)
+            self.leadingView.removeFromSuperview()
+            self.trailingView.removeFromSuperview()
             super.addArrangedSubview(view)
         } else {
             super.addArrangedSubview(view)
