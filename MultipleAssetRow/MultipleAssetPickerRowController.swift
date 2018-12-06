@@ -30,8 +30,8 @@ open class MultipleAssetPickerRowController: UIViewController, TypedRowControlle
         pickerController.view.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(self.pickerController.view)
         
-        self.addChildViewController(self.pickerController)
-        pickerController.didMove(toParentViewController: self)
+        self.addChild(self.pickerController)
+        pickerController.didMove(toParent: self)
 
         self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[pickerView]|", options: [], metrics: [:], views: ["pickerView": self.pickerController.view]))
         self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[pickerView]|", options: [], metrics: [:], views: ["pickerView": self.pickerController.view]))

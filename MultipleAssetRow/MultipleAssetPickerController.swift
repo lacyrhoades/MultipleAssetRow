@@ -85,7 +85,7 @@ class MultipleAssetPickerController: UIViewController {
     var navigationStackView = UIStackView()
     var collectionView: UICollectionView!
     var grayoutView = UIView()
-    var activitySpinner = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+    var activitySpinner = UIActivityIndicatorView(style: .whiteLarge)
     var loadingLabel = UILabel()
     var toolbar = UIStackView()
     var selectAllButton = UIButton(type: .custom)
@@ -205,7 +205,7 @@ class MultipleAssetPickerController: UIViewController {
         if #available(iOS 11, *) {
             let guide = view.safeAreaLayoutGuide
             NSLayoutConstraint.activate([
-                self.stackView.topAnchor.constraintEqualToSystemSpacingBelow(guide.topAnchor, multiplier: 1.0),                guide.bottomAnchor.constraintEqualToSystemSpacingBelow(self.stackView.bottomAnchor, multiplier: 1.0)
+                self.stackView.topAnchor.constraint(equalToSystemSpacingBelow: guide.topAnchor, multiplier: 1.0),                guide.bottomAnchor.constraint(equalToSystemSpacingBelow: self.stackView.bottomAnchor, multiplier: 1.0)
             ])
         } else {
             let space: CGFloat = 8.0

@@ -10,7 +10,7 @@ public enum MultipleAssetSelectionMode {
 
 public enum MultipleAssetClearAction {
     case no
-    case yes(style: UIAlertActionStyle)
+    case yes(style: UIAlertAction.Style)
 }
 
 protocol MultipleAssetRowProtocol {
