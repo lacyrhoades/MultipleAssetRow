@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "MultipleAssetRow"
-  s.version          = "3.0.0"
+  s.version          = "3.0.1"
   s.summary          = "Eureka row for choosing multiple assets"
   s.homepage         = "https://github.com/lacyrhoades/MultipleAssetRow"
   s.license          = { type: 'MIT', file: 'LICENSE' }
