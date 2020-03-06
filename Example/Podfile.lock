@@ -1,0 +1,23 @@
+PODS:
+  - Eureka (5.2.0)
+  - MultipleAssetRow (4.2.0):
+    - Eureka
+
+DEPENDENCIES:
+  - MultipleAssetRow (from `../`)
+
+SPEC REPOS:
+  trunk:
+    - Eureka
+
+EXTERNAL SOURCES:
+  MultipleAssetRow:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  Eureka: 820a761c700f6eaab3b60758f138e0d9b99072b3
+  MultipleAssetRow: 1c791af5d8977f7a431310e2664bf34efe9cf68f
+
+PODFILE CHECKSUM: 11b21f2f0f0c5a1789422fe1fdaf845dc97391e2
+
+COCOAPODS: 1.8.4

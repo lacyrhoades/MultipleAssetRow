@@ -73,7 +73,7 @@ open class _MultipleAssetRow<Cell: CellType>: OptionsRow<Cell>, PresenterRowType
 
     deselect()
 
-    var availableSources: MultipleAssetRowSourceTypes = MultipleAssetRowSourceTypes.All
+    var availableSources: MultipleAssetRowSourceTypes = MultipleAssetRowSourceTypes.allSources
 
     if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
       let _ = availableSources.insert(MultipleAssetRowSourceTypes.PhotoLibrary)

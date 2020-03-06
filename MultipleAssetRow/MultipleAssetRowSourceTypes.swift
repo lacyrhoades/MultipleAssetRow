@@ -23,7 +23,8 @@ public struct MultipleAssetRowSourceTypes: OptionSet {
     public static let Dropbox = MultipleAssetRowSourceTypes(.dropbox)
     public static let Google = MultipleAssetRowSourceTypes(.google)
     public static let SMBShare = MultipleAssetRowSourceTypes(.smbShare)
-    public static let All: MultipleAssetRowSourceTypes = [PhotoLibrary, Dropbox, Google]
+    
+    public static let allSources: MultipleAssetRowSourceTypes = [.PhotoLibrary, .Dropbox, .Google, .SMBShare]
 }
 
 extension MultipleAssetRowSourceTypes {
@@ -37,8 +38,6 @@ extension MultipleAssetRowSourceTypes {
             return NSLocalizedString("Google Drive", comment: "")
         case MultipleAssetRowSourceTypes.SMBShare:
             return NSLocalizedString("Local Network Share", comment: "")
-        case MultipleAssetRowSourceTypes.All:
-            return NSLocalizedString("All", comment: "")
         default:
             assert(false)
             return NSLocalizedString("Unknown", comment: "")

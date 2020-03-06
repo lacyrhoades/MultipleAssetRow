@@ -10,5 +10,5 @@ Pod::Spec.new do |s|
   s.requires_arc = true
   s.ios.source_files = 'MultipleAssetRow/**/*'
   s.resource_bundles = { 'MultipleAssetRowResources' => ['Shared/**/*'] }
-  s.dependency 'Eureka', '~> 4.0'
+  s.dependency 'Eureka'
 end
