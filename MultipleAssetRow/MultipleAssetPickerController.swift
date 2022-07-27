@@ -220,6 +220,7 @@ class MultipleAssetPickerController: UIViewController {
             NSLayoutConstraint(item: navigationStackView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 36.0)
         ])
         
+        self.collectionView.reloadData()
         self.showLoading()
     }
     
@@ -405,4 +406,22 @@ extension UIColor {
     static var backgroundGray: UIColor {
         return UIColor(red: 0.9, green: 0.9, blue: 0.9, alpha: 1.0)
     }
+}
+
+
+private extension DispatchTime {
+    static func seconds(_ secs: TimeInterval) -> DispatchTime {
+        return DispatchTime.now() + secs
+    }
+    
+    init(_ seconds: TimeInterval) {
+        self = DispatchTime.now() + seconds
+    }
+}
+
+private func delay(_ delay: TimeInterval, closure: @escaping ()->()) {
+    DispatchQueue.main.asyncAfter(
+        deadline: DispatchTime.seconds(delay),
+        execute: closure
+    )
 }

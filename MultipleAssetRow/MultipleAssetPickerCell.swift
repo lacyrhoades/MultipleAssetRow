@@ -77,7 +77,7 @@ class MultipleAssetPickerCell: UICollectionViewCell {
         thinLine.translatesAutoresizingMaskIntoConstraints = false
         self.contentView.addSubview(thinLine)
         
-        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[icon]-[thinLine]|", options: [], metrics: [:], views: ["icon": icon, "thinLine": thinLine]))
+        self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-(margin)-[icon]-(margin)-[thinLine]|", options: [], metrics: ["margin": 12.0], views: ["icon": icon, "thinLine": thinLine]))
         self.contentView.addConstraint(NSLayoutConstraint(item: icon, attribute: .height, relatedBy: .equal, toItem: icon, attribute: .width, multiplier: 1, constant: 1.0))
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-(margin)-[icon]-(margin)-|", options: [], metrics: ["margin": 8.0], views: ["icon": icon]))
         self.contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-(margin)-[titleLabel]-(margin)-|", options: [], metrics: ["margin": 8.0], views: ["titleLabel": titleLabel]))
