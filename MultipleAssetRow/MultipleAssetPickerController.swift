@@ -388,14 +388,13 @@ extension MultipleAssetPickerController {
     }
     
     func updateSelectionUI() {
-        self.selectAllButton.isHidden = self.assetDelegate?.selectionMode == .pathOnly
-        self.selectAllButton.isSelected = self.selections.isEmpty == false
-        
-        let someSelections = self.selections.isEmpty == false
-        let empty = self.assetDelegate?.currentPath.isEmpty ?? true
         let pathOnly = self.assetDelegate?.selectionMode == .pathOnly
+        let someSelections = self.selections.isEmpty == false
         
-        self.parent?.navigationItem.rightBarButtonItem?.isEnabled = someSelections || (pathOnly && empty == false)
+        self.selectAllButton.isHidden = pathOnly
+        self.selectAllButton.isSelected = someSelections
+
+        self.parent?.navigationItem.rightBarButtonItem?.isEnabled = someSelections || pathOnly
     }
 }
 

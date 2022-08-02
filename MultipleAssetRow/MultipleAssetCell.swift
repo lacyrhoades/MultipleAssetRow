@@ -131,7 +131,9 @@ class MultipleAssetView: UIView {
     
     func showAssets() {
         DispatchQueue.main.async {
-            self.emptyLabel.isHidden = (self.assets?.isEmpty ?? true) == false
+            let notEmpty = (self.assets?.isEmpty ?? true) == false
+            let isPathSelection = (self.assets?.isPathSelection ?? false)
+            self.emptyLabel.isHidden = notEmpty && !isPathSelection
         }
         
         guard let assets = self.assets, assets.isEmpty == false else {
@@ -314,10 +316,16 @@ extension UIImage {
 }
 
 func labelString(forPath path: String, andSourceType type: MultipleAssetRowSourceTypes) -> String {
-    return String(format: "\"%@\" via %@", path.isEmpty ? "/" : path.truncatedTail(length: 20), type.localizedString)
+    return String(format: "\"%@\" via %@", path.isEmpty ? "/" : path.degoogleized.truncatedTail(length: 20), type.localizedString)
 }
 
 extension String {
+    var degoogleized: String {
+        get {
+            return self.replacingOccurrences(of: "/-π-/", with: "/")
+        }
+    }
+    
     func truncatedTail(length: Int, prefix: String? = "\u{2026}") -> String {
         if self.count > length {
             let min = index(endIndex, offsetBy: length * -1)

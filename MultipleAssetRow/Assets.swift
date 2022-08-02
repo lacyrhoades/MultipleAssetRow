@@ -29,6 +29,14 @@ public struct AssetSet {
         return self.contents.isEmpty
     }
     
+    public var isPathSelection: Bool {
+        if let name = self.contents.first?.name {
+            return name == "path"
+        }
+        
+        return false
+    }
+    
     public init() {
         self.contents = []
     }
